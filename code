@@ -1,0 +1,190 @@
+# TextFileOperation
+# Sort of random number in text file 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#pragma warning(disable:4996)
+
+void swap(int *a, int *b)
+{
+	int tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
+void bubble(int *a, int n)
+{
+	int i, j;
+	for (i = 0; i < n; i++)
+	{
+		for (j = 1; j < n - i; j++)
+		{
+			if (a[j] < a[j - 1])
+			{
+				swap(&a[j], &a[j - 1]);
+			}
+		}
+	}
+}
+
+
+int main02()
+{
+	FILE *p = fopen("D:\\temp\\a.txt", "w");
+	if (p == NULL)
+		return 0;
+
+	srand((unsigned int)time(NULL));
+	int i;
+	for (i = 0; i < 1000000; i++)
+	{
+
+		int a = rand() % 256;
+		char array[20] = { 0 };
+		sprintf(array, "%d\n", a);
+		fputs(array, p);
+	}
+	fclose(p);
+	return 0;
+}
+
+int main01()
+{
+	FILE *p = fopen("D:\\temp\\a.txt", "r");
+	if (p == NULL)
+	{
+		return 0;
+	}
+
+	int array[100] = { 0 };
+	int i;
+	for (i = 0; i < 100; i++)
+	{
+		char a[100] = { 0 };
+		fgets(a, sizeof(a), p);
+		array[i] = atoi(a);//因为读出来是个字符串，所以要把字符串转化为整数
+	}
+	fclose(p);
+	bubble(array, 100);
+	p = fopen("D:\\temp\\a.txt", "w");
+	if (p == NULL)
+	{
+		return 0;
+	}
+	for (i = 0; i < 100; i++)
+	{
+		char a[100] = { 0 };
+		sprintf(a, "%d\n", array[i]);
+		fputs(a, p);
+	}
+	fclose(p);
+	return 0;
+
+}
+
+int main03()
+{
+	FILE *p = fopen("D:\\temp\\a.txt", "r");
+	if (p == NULL)
+	{
+		return 0;
+	}
+	unsigned int array[256] = { 0 };
+	while (1)
+	{
+		char a[100] = { 0 };
+		if (fgets(a, sizeof(a), p) == NULL)
+			break;
+		
+		int tmp = atoi(a);
+		array[tmp]++;//针对索引计数
+	}
+	fclose(p);
+
+	p = fopen("D:\\temp\\a.txt", "w");
+	if (p == NULL)
+	{
+		return 0;
+	}
+
+	unsigned int i, j;
+	for (i = 0; i < 256; i++)
+	{
+		for (j = 0; j < array[i]; j++)
+		{
+			char a[100] = { 0 };
+			sprintf(a, "%d\n", i);
+			fputs(a, p);
+		}
+	}
+	fclose(p);
+	return 0;
+}
+
+void swap_char(char*a, char *b)
+{
+	char tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
+void bubble_char(char *a, int n)//排除回车的冒泡算法
+{
+	int i, j;
+	for (i = 0; i < n; i++)
+	{
+		for (j = 1; j < n - i; j++)
+		{
+			if (a[j] == '\n')
+			{
+
+				if (a[j + 1] < a[j - 1])
+				{
+					swap_char(&a[j + 1], &a[j - 1]);
+				}
+				j++;//跳过回车键
+			}
+			else
+			{
+				if (a[j] < a[j - 1])
+				{
+					swap_char(&a[j], &a[j - 1]);
+				}
+			}
+		}
+	}
+}
+
+int main()
+{
+	FILE *p = fopen("D:\\temp\\a.txt", "r");
+	if (p == NULL)
+	{
+		return -1;
+	}
+
+	char content[1024] = { 0 };
+
+	while (1)
+	{
+		char buf[100] = { 0 };
+		if (fgets(buf, sizeof(buf), p) == NULL)
+			break;
+		strcat(content, buf);//把一行追加到content的后面
+
+	}
+	fclose(p);
+	bubble_char(content, strlen(content));
+	//printf("%s", content);
+	p = fopen("D:\\temp\\a.txt", "w");
+	if (p == NULL)
+	{
+		return -1;
+	}
+	fputs(content, p);
+	fclose(p);
+	return 0;
+}
+
+
